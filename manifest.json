@@ -1,0 +1,31 @@
+{
+  "name": "UNED IA Gran Canaria · Panel del Grado",
+  "short_name": "UNED IA GC",
+  "description": "Panel de control del Grado en Inteligencia Artificial adaptado al Centro Asociado de la UNED en Gran Canaria (Canarias)",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#00533e",
+  "theme_color": "#00533e",
+  "lang": "es-ES",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
