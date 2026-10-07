@@ -2562,12 +2562,13 @@ dialog::backdrop {
 <!-- Event Creation / Day Dialog -->
 <dialog id="eventModal">
   <div class="modal-header">
-    <h3 id="eventModalTitle">Añadir Evento</h3>
+    <h3 id="eventModalTitle">Eventos del Día</h3>
     <button class="modal-close-btn" onclick="document.getElementById('eventModal').close()">
       <svg class="i" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
   <div class="modal-body">
+    <div id="dayEventsList"></div>
     <form id="eventForm" style="display:flex;flex-direction:column;gap:14px">
       <input type="hidden" id="evId">
       <div>
@@ -3481,7 +3482,44 @@ function openDayEvents(k) {
   document.getElementById('evTitle').value = '';
   document.getElementById('evId').value = '';
   document.getElementById('btnDeleteEvent').style.display = 'none';
-  document.getElementById('eventModalTitle').textContent = 'Añadir evento para ' + k;
+  document.getElementById('eventModalTitle').textContent = 'Eventos del ' + k;
+
+  // Listar eventos del día
+  const dow = (new Date(k).getDay() + 6) % 7;
+  const off = OFFICIAL_CAL.find(o => o.start <= k && k <= o.end);
+  const exs = EXAMS.filter(e => e.date === k);
+  const evs = userEvents.filter(e => e.date === k);
+  
+  // Mostrar tutorías si estamos en un mes lectivo del cuatrimestre (approx sept-ene, feb-jun)
+  const month = new Date(k).getMonth();
+  const tuts = TUTORIAS.filter(t => t.dow === dow && (month >= 8 || month <= 5)); 
+
+  let html = '';
+  if (off) {
+    html += `<div style="background:var(--c-rose-bg);color:var(--c-rose-text);padding:8px 12px;border-radius:var(--radius);margin-bottom:6px;font-size:0.85rem"><b>Oficial UNED:</b> ${off.title}</div>`;
+  }
+  exs.forEach(x => {
+    html += `<div style="background:var(--c-rose);color:#fff;padding:8px 12px;border-radius:var(--radius);margin-bottom:6px;font-size:0.85rem"><b>Examen ${x.time}:</b> ${subjName(x.code)}</div>`;
+  });
+  tuts.forEach(t => {
+    html += `<div style="background:var(--surface-2);padding:8px 12px;border-radius:var(--radius);margin-bottom:6px;font-size:0.85rem;border:1px solid var(--border)"><b>Tutoría ${t.start} - ${t.end}:</b> ${subjName(t.code)} (${t.place})</div>`;
+  });
+  evs.forEach(e => {
+    html += `<div style="background:var(--primary-light);color:var(--primary-text);padding:8px 12px;border-radius:var(--radius);margin-bottom:6px;font-size:0.85rem;display:flex;justify-content:space-between;align-items:center;">
+      <div><b>${e.time || 'Todo el día'}</b> - ${e.title}</div>
+      <button type="button" onclick="editUserEvent('${e.id}')" style="background:none;border:none;color:var(--primary);cursor:pointer;font-weight:700;font-size:0.8rem">Editar</button>
+    </div>`;
+  });
+
+  const listContainer = document.getElementById('dayEventsList');
+  if (html) {
+    listContainer.innerHTML = html + `<hr style="margin:16px 0;border:none;border-top:1px solid var(--border)">
+      <h4 style="margin:0 0 10px 0;font-size:0.9rem;">Añadir nuevo evento</h4>`;
+    listContainer.style.display = 'block';
+  } else {
+    listContainer.innerHTML = `<h4 style="margin:0 0 10px 0;font-size:0.9rem;">Añadir nuevo evento</h4>`;
+    listContainer.style.display = 'block';
+  }
 
   // Poblar select de asignaturas
   const sel = document.getElementById('evSubject');
@@ -3489,6 +3527,19 @@ function openDayEvents(k) {
 
   document.getElementById('eventModal').showModal();
 }
+
+// Para que el botón de editar del innerHTML funcione, tiene que estar expuesta en el scope o document.
+window.editUserEvent = function(id) {
+  const e = userEvents.find(x => x.id === id);
+  if (!e) return;
+  document.getElementById('evId').value = e.id;
+  document.getElementById('evTitle').value = e.title;
+  document.getElementById('evDate').value = e.date;
+  document.getElementById('evTime').value = e.time || '';
+  document.getElementById('evType').value = e.type || 'otro';
+  document.getElementById('evSubject').value = e.subject || '';
+  document.getElementById('btnDeleteEvent').style.display = 'block';
+};
 
 document.getElementById('btnAddNewEvent').addEventListener('click', () => {
   openDayEvents(TODAY);
