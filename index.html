@@ -1812,14 +1812,27 @@ dialog::backdrop {
 }
 
 @media (max-width: 600px) {
-  /* Calendario para móvil */
+  /* Calendario para móvil - Scroll horizontal */
+  .cal-wrapper-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 12px;
+    margin-left: -16px;
+    margin-right: -16px;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .cal-days-header,
+  .cal-days-grid {
+    min-width: 650px;
+  }
   .cal-day-cell {
     aspect-ratio: auto;
     min-height: 80px;
-    padding: 4px;
+    padding: 6px;
   }
   .cal-days-header {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
   }
   .cal-event-chip {
     font-size: 0.55rem;
@@ -2323,12 +2336,14 @@ dialog::backdrop {
               </div>
             </div>
 
-            <div class="cal-days-header">
-              <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
-            </div>
+            <div class="cal-wrapper-scroll">
+              <div class="cal-days-header">
+                <span>Lun</span><span>Mar</span><span>Mié</span><span>Jue</span><span>Vie</span><span>Sáb</span><span>Dom</span>
+              </div>
 
-            <div class="cal-days-grid" id="calDaysGrid">
-              <!-- Rendered via JS -->
+              <div class="cal-days-grid" id="calDaysGrid">
+                <!-- Rendered via JS -->
+              </div>
             </div>
           </div>
 
