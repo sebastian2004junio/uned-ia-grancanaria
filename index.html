@@ -1576,6 +1576,14 @@ svg.i {
   border-color: var(--c-rose-border);
 }
 
+.cal-day-cell.off-day {
+  background: rgba(147, 51, 234, 0.04);
+  border: 1px solid rgba(147, 51, 234, 0.2);
+}
+.cal-day-cell.off-day:hover {
+  background: rgba(147, 51, 234, 0.1);
+}
+
 .cal-day-num {
   font-size: 0.82rem;
   font-weight: 700;
@@ -3353,15 +3361,40 @@ function getDailyStudyPlan(dateStr) {
   let detail = '';
   
   if (isOffDay) {
-    if (cycleDay === 0) { subj = 'Álgebra'; detail = 'Bloque largo (Día libre 1)'; }
-    if (cycleDay === 1) { subj = 'Cálculo'; detail = 'Bloque largo (Día libre 2)'; }
-    if (cycleDay === 2) { subj = 'Álgebra / Cálculo'; detail = 'Repaso o Prácticas (Día libre 3)'; }
+    if (cycleDay === 0) subj = 'Álgebra';
+    if (cycleDay === 1) subj = 'Cálculo';
+    if (cycleDay === 2) subj = 'Repaso General';
   } else {
-    // cycleDay goes from 3 to 8
-    if (cycleDay % 2 !== 0) { subj = 'Lógica'; detail = 'Estudio (Día de trabajo)'; }
-    else { subj = 'Computadores'; detail = 'Estudio (Día de trabajo)'; }
+    if (cycleDay % 2 !== 0) subj = 'Lógica';
+    else subj = 'Computadores';
   }
-  
+
+  if (m === 8 || m === 9) { // Sept / Oct
+    if (subj === 'Álgebra') detail = 'Tema I (escalares). Completar 1.4-1.6 y Tema 2 (numeración).';
+    else if (subj === 'Cálculo') detail = 'Temas 1-2 (reales y funciones).';
+    else if (subj === 'Lógica') detail = 'Sintaxis y semántica proposicional.';
+    else if (subj === 'Computadores') detail = 'Temas 1-2 (componentes y memoria).';
+    else detail = 'Día libre 3: Ponerse al día con Álgebra y Cálculo o adelantar prácticas.';
+  } else if (m === 10) { // Noviembre
+    if (subj === 'Álgebra') detail = 'Tema II (tensores, matrices y vectores, págs. 55-118).';
+    else if (subj === 'Cálculo') detail = 'Temas 3-5 (límites, derivadas, aplicaciones).';
+    else if (subj === 'Lógica') detail = 'Equivalencia, tableaux y deducción natural. (Práctica a finales de mes).';
+    else if (subj === 'Computadores') detail = 'Temas 3-6 (E/S, CPU, SO, procesos).';
+    else detail = 'Día libre 3: Ponerse al día o empezar la Práctica 1 de Lógica.';
+  } else if (m === 11) { // Diciembre
+    if (subj === 'Álgebra') detail = 'Temas III y IV para la PEC. Preparar PEC oficial y Práctica de Python.';
+    else if (subj === 'Cálculo') detail = 'Temas 6-7 (integrales) y preparar la PEC.';
+    else if (subj === 'Lógica') detail = 'Hacer tests voluntarios a ritmo constante y preparar Práctica 2.';
+    else if (subj === 'Computadores') detail = 'Temas 7-8 y preparar la PEC de diciembre.';
+    else detail = 'Día libre 3: Avanzar en la Práctica de Python de Álgebra (¡es vital!).';
+  } else if (m === 0 || m === 1) { // Enero / Febrero
+    if (subj === 'Álgebra') detail = 'Tema V (diagonalización y SVD) y simulacros. Entrega Práctica.';
+    else if (subj === 'Cálculo') detail = 'Temas 8-10 y problemas de examen.';
+    else if (subj === 'Lógica') detail = 'Cerrar los tests antes del 24 y repasar para examen.';
+    else if (subj === 'Computadores') detail = 'Temas 9-10 y repasar para examen.';
+    else detail = 'Día libre 3: Simulacros de examen y últimos retoques de prácticas.';
+  }
+
   return { subj, detail, isOffDay };
 }
 
@@ -3393,9 +3426,11 @@ function renderCalendar() {
     const tuts = TUTORIAS.filter(t => t.dow === dow && isThisMonth);
 
     let cellCls = ['cal-day-cell'];
+    const plan = getDailyStudyPlan(k);
     if (!isThisMonth) cellCls.push('out');
     if (isToday) cellCls.push('today');
     if (isWeekend) cellCls.push('weekend');
+    if (plan && plan.isOffDay) cellCls.push('off-day');
     if (off && off.kind === 'exam') cellCls.push('exam-day');
 
     let chips = '';
@@ -3409,7 +3444,6 @@ function renderCalendar() {
 
     let studyChip = '';
     if (isThisMonth) {
-      const plan = getDailyStudyPlan(k);
       if (plan && plan.subj) {
         // Marcamos de color diferente si es día libre vs día de trabajo
         const color = plan.isOffDay ? 'var(--primary)' : 'var(--text-muted)';
