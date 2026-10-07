@@ -3349,6 +3349,11 @@ function openSubjectModal(code) {
           <svg class="i" style="width:14px;height:14px;margin-right:4px" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
           Mis Apuntes (Carpeta)
         </a>
+        ${NOTEBOOKS_LIST.find(n => n.code === x.code) ? `
+        <a href="${NOTEBOOKS_LIST.find(n => n.code === x.code).u}" target="_blank" rel="noopener" class="btn-secondary-sm" style="background:var(--surface-3);color:#fff;border-color:var(--surface-3)">
+          <svg class="i" style="width:14px;height:14px;margin-right:4px" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15Z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>
+          Mi Libreta IA (NotebookLM) ↗
+        </a>` : ''}
         <a href="https://www.uned.es/universidad/inicio/estudios/grados/grado-en-ingenieria-informatica/asignaturas.html?codTitulacion=7103&codAsignatura=${x.code}" target="_blank" rel="noopener" class="btn-secondary-sm">Guía oficial PDF ↗</a>
         <a href="https://agora.uned.es" target="_blank" rel="noopener" class="btn-secondary-sm">Curso Ágora ↗</a>
         <a href="https://akademosweb.uned.es" target="_blank" rel="noopener" class="btn-secondary-sm">Akademos Tutorías ↗</a>
