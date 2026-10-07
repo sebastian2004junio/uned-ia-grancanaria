@@ -3218,30 +3218,43 @@ function openSubjectModal(code) {
   const ex = EXAMS.find(e => e.code === code);
   const info = SUBJ_INFO[code] || {};
 
-  const body = document.getElementById('subjModalBody');
-  body.innerHTML = `
-    <div style="margin-bottom:20px">
-      <label style="font-size:0.8rem;font-weight:700;color:var(--text-muted);display:block;margin-bottom:8px">Estado académico</label>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        ${['none','mat','conv','apr'].map(stKey => `
-          <button type="button" class="chip-btn ${stCode===stKey?'active':''}" data-set-status="${stKey}" style="padding:6px 14px">
-            ${stKey==='none'?'Pendiente':(stKey==='mat'?'Matriculada':(stKey==='conv'?'Convalidada':'Aprobada'))}
-          </button>`).join('')}
-      </div>
-      ${stCode === 'apr' ? `
-        <div style="margin-top:10px;display:flex;align-items:center;gap:8px">
-          <label style="font-size:0.82rem;font-weight:600">Nota numérica:</label>
-          <input type="number" id="inpSubjGrade" min="5" max="10" step="0.1" value="${s.grade ?? ''}" placeholder="Ej: 8.5" style="width:100px;padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius)">
-        </div>` : ''}
-    </div>
+    const makeSlug = (c, n) => {
+      const safeName = n.toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '');
+      return `${c}-${safeName}`;
+    };
+    const localDir = `./docs/asignaturas/${makeSlug(x.code, x.n)}`;
 
-    <!-- Quick Links -->
-    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
-      <a href="https://www.uned.es/universidad/inicio/estudios/grados/grado-en-ingenieria-informatica/asignaturas.html?codTitulacion=7103&codAsignatura=${x.code}" target="_blank" rel="noopener" class="btn-secondary-sm">Guía oficial PDF ↗</a>
-      <a href="https://agora.uned.es" target="_blank" rel="noopener" class="btn-secondary-sm">Curso Ágora ↗</a>
-      <a href="https://akademosweb.uned.es" target="_blank" rel="noopener" class="btn-secondary-sm">Akademos Tutorías ↗</a>
-      <a href="https://www.librosuned.com" target="_blank" rel="noopener" class="btn-secondary-sm">Libros UNED ↗</a>
-    </div>
+    const body = document.getElementById('subjModalBody');
+    body.innerHTML = `
+      <div style="margin-bottom:20px">
+        <label style="font-size:0.8rem;font-weight:700;color:var(--text-muted);display:block;margin-bottom:8px">Estado académico</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          ${['none','mat','conv','apr'].map(stKey => `
+            <button type="button" class="chip-btn ${stCode===stKey?'active':''}" data-set-status="${stKey}" style="padding:6px 14px">
+              ${stKey==='none'?'Pendiente':(stKey==='mat'?'Matriculada':(stKey==='conv'?'Convalidada':'Aprobada'))}
+            </button>`).join('')}
+        </div>
+        ${stCode === 'apr' ? `
+          <div style="margin-top:10px;display:flex;align-items:center;gap:8px">
+            <label style="font-size:0.82rem;font-weight:600">Nota numérica:</label>
+            <input type="number" id="inpSubjGrade" min="5" max="10" step="0.1" value="${s.grade ?? ''}" placeholder="Ej: 8.5" style="width:100px;padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius)">
+          </div>` : ''}
+      </div>
+
+      <!-- Quick Links -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+        <a href="${localDir}" target="_blank" rel="noopener" class="btn-secondary-sm" style="background:var(--primary);color:#fff;border-color:var(--primary)">
+          <svg class="i" style="width:14px;height:14px;margin-right:4px" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+          Mis Apuntes (Carpeta)
+        </a>
+        <a href="https://www.uned.es/universidad/inicio/estudios/grados/grado-en-ingenieria-informatica/asignaturas.html?codTitulacion=7103&codAsignatura=${x.code}" target="_blank" rel="noopener" class="btn-secondary-sm">Guía oficial PDF ↗</a>
+        <a href="https://agora.uned.es" target="_blank" rel="noopener" class="btn-secondary-sm">Curso Ágora ↗</a>
+        <a href="https://akademosweb.uned.es" target="_blank" rel="noopener" class="btn-secondary-sm">Akademos Tutorías ↗</a>
+        <a href="https://www.librosuned.com" target="_blank" rel="noopener" class="btn-secondary-sm">Libros UNED ↗</a>
+      </div>
 
     <!-- Center info Gran Canaria -->
     <div style="background:var(--surface-2);padding:14px;border-radius:var(--radius);margin-bottom:18px;font-size:0.85rem">
