@@ -3374,10 +3374,28 @@ function renderCalendar() {
       chips += `<div class="cal-event-chip" style="background:var(--primary-light);color:var(--primary-text)">${e.title.slice(0,12)}</div>`;
     });
 
+    let studyChip = '';
+    // Semestre 1 (Sept a Ene)
+    if (isThisMonth && (m >= 8 || m === 0)) {
+       let subj = '';
+       if (dow === 0 || dow === 2) subj = 'Lógica';
+       else if (dow === 1 || dow === 3) subj = 'Computadores';
+       else if (dow === 4) subj = 'Repaso / Tareas';
+       else if (dow === 5) subj = 'Álgebra';
+       else if (dow === 6) subj = 'Cálculo';
+       
+       if (subj) {
+         studyChip = `<div style="font-size:0.68rem; color:var(--primary); font-weight:700; margin-bottom:4px; margin-top:-2px; letter-spacing:0.2px;">📚 ${subj}</div>`;
+       }
+    }
+
     html += `
       <div class="${cellCls.join(' ')}" onclick="openDayEvents('${k}')">
         <span class="cal-day-num">${d.getDate()}</span>
-        <div class="cal-day-dots">${chips}</div>
+        <div class="cal-day-dots">
+          ${studyChip}
+          ${chips}
+        </div>
       </div>`;
   }
 
@@ -3562,6 +3580,16 @@ document.getElementById('eventForm').addEventListener('submit', e => {
   if (idx >= 0) userEvents[idx] = newEv;
   else userEvents.push(newEv);
 
+  saveJSON(EVENTS_KEY, userEvents);
+  document.getElementById('eventModal').close();
+  renderHome();
+  renderCalendar();
+});
+
+document.getElementById('btnDeleteEvent').addEventListener('click', () => {
+  const id = document.getElementById('evId').value;
+  if (!id) return;
+  userEvents = userEvents.filter(x => x.id !== id);
   saveJSON(EVENTS_KEY, userEvents);
   document.getElementById('eventModal').close();
   renderHome();
