@@ -1812,6 +1812,16 @@ dialog::backdrop {
 }
 
 @media (max-width: 600px) {
+  /* Prevenir que el scroll horizontal rompa el grid de toda la página */
+  .calendar-layout-grid {
+    min-width: 0;
+  }
+  .calendar-main-card {
+    min-width: 0;
+    overflow: hidden;
+    padding: 16px;
+  }
+
   /* Calendario para móvil - Scroll horizontal */
   .cal-wrapper-scroll {
     overflow-x: auto;
@@ -1825,6 +1835,14 @@ dialog::backdrop {
   .cal-days-header,
   .cal-days-grid {
     min-width: 650px;
+  }
+  .cal-controls-row {
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .cal-title-display {
+    font-size: 1.1rem;
   }
   .cal-day-cell {
     aspect-ratio: auto;
