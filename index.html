@@ -1810,6 +1810,51 @@ dialog::backdrop {
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 600px) {
+  /* Calendario para móvil */
+  .cal-day-cell {
+    aspect-ratio: auto;
+    min-height: 80px;
+    padding: 4px;
+  }
+  .cal-days-header {
+    font-size: 0.65rem;
+  }
+  .cal-event-chip {
+    font-size: 0.55rem;
+    padding: 2px 4px;
+    margin-bottom: 2px;
+  }
+  .cal-day-dots {
+    gap: 1px;
+  }
+  
+  /* Textos de estudio más pequeños */
+  .study-chip-inline {
+    font-size: 0.55rem !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.1;
+  }
+
+  /* Modales ocupando toda la pantalla */
+  dialog {
+    width: 95%;
+    max-height: 90vh;
+    padding: 16px;
+  }
+  
+  /* Ajuste de botones superiores */
+  .topbar-actions {
+    gap: 8px;
+  }
+  .btn-primary {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
+}
 </style>
 </head>
 
@@ -3447,7 +3492,7 @@ function renderCalendar() {
       if (plan && plan.subj) {
         // Marcamos de color diferente si es día libre vs día de trabajo
         const color = plan.isOffDay ? 'var(--primary)' : 'var(--text-muted)';
-        studyChip = `<div style="font-size:0.68rem; color:${color}; font-weight:700; margin-bottom:4px; margin-top:-2px; letter-spacing:0.2px;">📚 ${plan.subj}</div>`;
+        studyChip = `<div class="study-chip-inline" style="font-size:0.68rem; color:${color}; font-weight:700; margin-bottom:4px; margin-top:-2px; letter-spacing:0.2px;">📚 ${plan.subj}</div>`;
       }
     }
 
