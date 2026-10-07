@@ -1,7 +1,7 @@
-{
-  "name": "Studyflow · UNED IA Gran Canaria",
+﻿{
+  "name": "Studyflow UNED IA",
   "short_name": "Studyflow",
-  "description": "Panel de control académico y de estudio del Grado en Inteligencia Artificial adaptado al Centro Asociado de la UNED en Gran Canaria (Canarias)",
+  "description": "Panel de control academico y de estudio del Grado en Inteligencia Artificial adaptado al Centro Asociado de la UNED en Gran Canaria",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
