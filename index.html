@@ -3061,11 +3061,11 @@ function renderProgressView() {
               </div>
               ${semSubjs.map(x => {
                 const stCode = statusOf(x.code);
-                return \`
-                  <div class="year-subj-mini-item \${stCode}" onclick="openSubjectModal('\${x.code}')" style="cursor:pointer; margin-bottom:4px;">
-                    <span style="font-weight:600">\${x.n}</span>
-                    <span style="font-size:0.72rem;color:var(--text-dim); flex-shrink:0;">\${x.e} ECTS</span>
-                  </div>\`;
+                return `
+                  <div class="year-subj-mini-item ${stCode}" onclick="openSubjectModal('${x.code}')" style="cursor:pointer; margin-bottom:4px;">
+                    <span style="font-weight:600">${x.n}</span>
+                    <span style="font-size:0.72rem;color:var(--text-dim); flex-shrink:0;">${x.e} ECTS</span>
+                  </div>`;
               }).join('')}
             `;
           }).join('')}
