@@ -3332,6 +3332,39 @@ document.getElementById('subjModalBody').addEventListener('input', e => {
 });
 
 /* ================= 8. Render Calendario (#calendario) ================= */
+function getDailyStudyPlan(dateStr) {
+  const d = new Date(dateStr);
+  const m = d.getMonth();
+  // Solo aplicamos esto a los meses del primer cuatrimestre (Septiembre a Enero)
+  if (m > 0 && m < 8) return null; 
+
+  // Referencia: Sábado 10 de octubre 2026 fue el primer día libre (de 3 seguidos)
+  const refDate = new Date('2026-10-10T00:00:00Z'); 
+  const targetDate = new Date(dateStr + 'T00:00:00Z');
+  
+  const diffTime = targetDate.getTime() - refDate.getTime();
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  
+  let cycleDay = diffDays % 9;
+  if (cycleDay < 0) cycleDay = (cycleDay % 9 + 9) % 9;
+  
+  const isOffDay = (cycleDay >= 0 && cycleDay <= 2);
+  let subj = '';
+  let detail = '';
+  
+  if (isOffDay) {
+    if (cycleDay === 0) { subj = 'Álgebra'; detail = 'Bloque largo (Día libre 1)'; }
+    if (cycleDay === 1) { subj = 'Cálculo'; detail = 'Bloque largo (Día libre 2)'; }
+    if (cycleDay === 2) { subj = 'Álgebra / Cálculo'; detail = 'Repaso o Prácticas (Día libre 3)'; }
+  } else {
+    // cycleDay goes from 3 to 8
+    if (cycleDay % 2 !== 0) { subj = 'Lógica'; detail = 'Estudio (Día de trabajo)'; }
+    else { subj = 'Computadores'; detail = 'Estudio (Día de trabajo)'; }
+  }
+  
+  return { subj, detail, isOffDay };
+}
+
 function renderCalendar() {
   const y = currentCalMonth.getFullYear();
   const m = currentCalMonth.getMonth();
@@ -3375,18 +3408,13 @@ function renderCalendar() {
     });
 
     let studyChip = '';
-    // Semestre 1 (Sept a Ene)
-    if (isThisMonth && (m >= 8 || m === 0)) {
-       let subj = '';
-       if (dow === 0 || dow === 2) subj = 'Lógica';
-       else if (dow === 1 || dow === 3) subj = 'Computadores';
-       else if (dow === 4) subj = 'Repaso / Tareas';
-       else if (dow === 5) subj = 'Álgebra';
-       else if (dow === 6) subj = 'Cálculo';
-       
-       if (subj) {
-         studyChip = `<div style="font-size:0.68rem; color:var(--primary); font-weight:700; margin-bottom:4px; margin-top:-2px; letter-spacing:0.2px;">📚 ${subj}</div>`;
-       }
+    if (isThisMonth) {
+      const plan = getDailyStudyPlan(k);
+      if (plan && plan.subj) {
+        // Marcamos de color diferente si es día libre vs día de trabajo
+        const color = plan.isOffDay ? 'var(--primary)' : 'var(--text-muted)';
+        studyChip = `<div style="font-size:0.68rem; color:${color}; font-weight:700; margin-bottom:4px; margin-top:-2px; letter-spacing:0.2px;">📚 ${plan.subj}</div>`;
+      }
     }
 
     html += `
@@ -3513,6 +3541,19 @@ function openDayEvents(k) {
   const tuts = TUTORIAS.filter(t => t.dow === dow && (month >= 8 || month <= 5)); 
 
   let html = '';
+  
+  // Mostrar plan de estudio en el modal
+  const plan = getDailyStudyPlan(k);
+  if (plan && plan.subj) {
+    const bgColor = plan.isOffDay ? 'var(--primary-light)' : 'var(--surface-2)';
+    const textColor = plan.isOffDay ? 'var(--primary-text)' : 'var(--text)';
+    const border = plan.isOffDay ? 'none' : '1px solid var(--border)';
+    html += `<div style="background:${bgColor};color:${textColor};padding:10px 12px;border-radius:var(--radius);border:${border};margin-bottom:12px;font-size:0.85rem">
+        <div style="font-weight:800;margin-bottom:2px">📚 Plan de estudio recomendado: ${plan.subj}</div>
+        <div style="font-size:0.8rem;opacity:0.85">${plan.detail}</div>
+      </div>`;
+  }
+
   if (off) {
     html += `<div style="background:var(--c-rose-bg);color:var(--c-rose-text);padding:8px 12px;border-radius:var(--radius);margin-bottom:6px;font-size:0.85rem"><b>Oficial UNED:</b> ${off.title}</div>`;
   }
